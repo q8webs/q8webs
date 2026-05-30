@@ -1,24 +1,32 @@
-import Q8WebHeroSequence from "@/components/Q8WebHeroSequence";
+import Header from "@/components/Header";
+import Hero from "@/components/Hero";
 import Services from "@/components/Services";
-import WhyQ8Web from "@/components/WhyQ8Web";
+import WhyQ8Webs from "@/components/WhyQ8Webs";
 import Portfolio from "@/components/Portfolio";
 import Process from "@/components/Process";
 import ContactCTA from "@/components/ContactCTA";
+import Footer from "@/components/Footer";
 
 export default function Home() {
   return (
-    <div className="bg-[#050505]">
-      {/* Scroll-Linked 3D Image Sequence Hero */}
-      <Q8WebHeroSequence />
+    <div className="bg-[#f8fafc] min-h-screen text-slate-900">
+      {/* Header Navigation */}
+      <Header />
+      
+      {/* Premium Light-Theme Hero */}
+      <Hero />
       
       {/* Main Content Sections */}
-      <div className="relative z-30 bg-[#050505]">
+      <div className="relative z-30 bg-[#f8fafc]">
         <Services />
-        <WhyQ8Web />
+        <WhyQ8Webs />
         <Portfolio />
         <Process />
         <ContactCTA />
       </div>
+
+      {/* Footer Section */}
+      <Footer />
     </div>
   );
 }
