@@ -217,7 +217,11 @@ em { font-style: normal; }
     @keyframes art-arrival { from { translate: 0 35px; } to { translate: 0 0; } }
   }
 }
-@media(min-width: 1500px) { .editorial-site { margin-block: 20px; } .editorial-header { top: 20px; } }
+/* Fill wide desktop screens while preserving the existing smaller layouts. */
+@media(min-width: 1441px) {
+  .editorial-site { width: 100%; margin-block: 0; }
+  .editorial-header { width: 100%; top: 0; }
+}
 @media(max-width: 1150px) {
   .editorial-shell, .header-shell { width: calc(100% - 100px); }
   .hero-manifesto { width: 43%; }
