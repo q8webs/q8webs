@@ -1,112 +1,37 @@
 "use client";
-
-import { motion } from "framer-motion";
-import { ArrowUpLeft } from "lucide-react";
+import { useState } from "react";
 import Image from "next/image";
+import { ArrowLeft, ArrowRight, ArrowUpLeft, ArrowUpRight, Plus, Minus } from "lucide-react";
+import { useLanguage } from "./LanguageContext";
 
 const projects = [
-  {
-    title: "موقع تعريفي للشركات",
-    description: "واجهة تعريفية احترافية فاخرة مع أقسام خدمات متطورة وطرق تواصل ذكية.",
-    category: "موقع شركات",
-    image: "/images/portfolio/corporate.png",
-    position: "object-top",
-  },
-  {
-    title: "منصة متجر إلكتروني متكامل",
-    description: "تجربة تسوق وشراء سلسة وسريعة مع تكامل كامل مع وسائل الدفع والطلبات.",
-    category: "متجر إلكتروني",
-    image: "/images/portfolio/ecommerce.png",
-    position: "object-center",
-  },
-  {
-    title: "تطبيق حجز وجدولة مواعيد",
-    description: "نظام حجز مواعيد وتذاكر ذكي وسريع مع لوحة تحكم ذكية وشاملة للمشرفين.",
-    category: "تطبيقات هواتف / SaaS",
-    image: "/images/portfolio/booking.png",
-    position: "object-center",
-  },
+  { key: "corporate", name: ["أطياب نقوة", "Atyab Naqwah"], type: ["تجارة إلكترونية · عطور وهوية فاخرة", "E-COMMERCE · FRAGRANCE & LUXURY"], image: "corporate", color: "sand", services: ["تصميم تجربة الشراء، واجهات المتجر، وربط الدفع الإلكتروني.", "Shopping experience, storefront design, and payment integration."] },
+  { key: "ecommerce", name: ["مبرة البحارنة", "Al Baharna Charity"], type: ["منصة تبرعات · تجربة تصنع أثراً", "DONATION PLATFORM · DIGITAL IMPACT"], image: "ecommerce", color: "mint", services: ["عرض المشاريع الخيرية، رحلة التبرع، ولوحة إدارة المحتوى.", "Charity project discovery, donation flow, and content management."] },
+  { key: "booking", name: ["برو تاش", "ProTouch"], type: ["نظام إدارة · كل التفاصيل بمكان واحد", "BUSINESS PLATFORM · CONNECTED OPERATIONS"], image: "booking", color: "violet", services: ["إدارة الحجوزات، متابعة الإيرادات، وتنظيم عمليات الخدمة.", "Booking management, revenue tracking, and service operations."] },
 ];
-
 export default function Portfolio() {
-  return (
-    <section id="portfolio" className="py-24 relative bg-white">
-      <div className="container mx-auto px-6 lg:px-12">
-        <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
-          <div>
-            <motion.h2 
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              className="text-4xl md:text-5xl font-black mb-4 text-slate-900 leading-tight"
-            >
-              أعمالنا
-            </motion.h2>
-            <motion.p 
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.1 }}
-              className="text-lg text-slate-500 font-semibold max-w-xl"
-            >
-              نستعرض بفخر بعضاً من المشاريع الرقمية الفاخرة التي نفذناها لعملائنا بأعلى معايير الدقة والسرعة.
-            </motion.p>
-          </div>
-          
-          <motion.a 
-            initial={{ opacity: 0, x: -20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            href="https://wa.me/96555512344"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-2 text-sky-500 hover:text-sky-600 font-black text-lg transition-colors group shrink-0"
-          >
-            <span>اطلب مشروعك الخاص</span>
-            <ArrowUpLeft className="w-5 h-5 group-hover:-translate-y-1 group-hover:-translate-x-1 transition-transform" />
-          </motion.a>
+  const { isRTL, t } = useLanguage();
+  const [active, setActive] = useState(0);
+  const [details, setDetails] = useState(false);
+  const project = projects[active];
+  const next = (delta: number) => { setActive((active + delta + projects.length) % projects.length); setDetails(false); };
+  const Arrow = isRTL ? ArrowUpLeft : ArrowUpRight;
+  return <section id="portfolio" className="work-section section-space">
+    <div className="site-shell">
+      <div className="section-topline"><span className="eyebrow">01 / {isRTL ? "أعمال مختارة" : "SELECTED WORK"}</span><span className="micro-label">DESIGNED WITH PURPOSE. BUILT WITH CARE.</span></div>
+      <div className="section-heading"><h2>{isRTL ? <>أفكار صارت <em>واقع.</em></> : <>Ideas made <em>real.</em></>}</h2><p>{isRTL ? "لكل مشروع حكاية. وهذي بعض التجارب اللي صممناها لتعبّر عن أصحابها." : "Every project has a story. Explore the experiences we built to bring each one to life."}</p></div>
+      <div className={`project-stage ${project.color}`}>
+        <div className="project-stage-grid" aria-hidden="true" />
+        <span className="project-stage-word" aria-hidden="true">{["NAQWAH", "IMPACT", "PROTOUCH"][active]}</span>
+        <div className="project-preview" key={project.key}>
+          <div className="browser-chrome"><span><i /><i /><i /></span><small>{project.name[1]} / Q8WEBS</small><span>↗</span></div>
+          <div className="project-image"><Image src={`/images/portfolio/${project.image}.png`} alt={isRTL ? `معاينة مشروع ${project.name[0]}` : `${project.name[1]} project preview`} fill sizes="(max-width: 700px) 90vw, 75vw" className="object-cover object-top" /></div>
         </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {projects.map((project, index) => (
-            <motion.div
-              key={index}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: index * 0.1 }}
-              className="group relative rounded-[2rem] overflow-hidden bg-slate-50 border border-slate-100 aspect-[16/10] md:aspect-[4/3] flex flex-col justify-end p-6 md:p-8 cursor-pointer shadow-[0_10px_35px_rgba(0,0,0,0.01)] hover:shadow-[0_20px_45px_rgba(0,0,0,0.04)] transition-all duration-500"
-            >
-              {/* Subtle Blue/Cyan Border on Card Hover */}
-              <div className="absolute inset-0 border-2 border-sky-500/0 group-hover:border-sky-500/30 transition-colors duration-500 rounded-[2rem] z-20 pointer-events-none" />
-              
-              {/* Background Image */}
-              <div className="absolute inset-0 bg-slate-200">
-                <Image 
-                  src={project.image}
-                  alt={project.title}
-                  fill
-                  className={`object-cover ${project.position} transition-transform duration-700 ease-out md:group-hover:scale-105 opacity-90 group-hover:opacity-100`}
-                  sizes="(max-width: 768px) 100vw, 33vw"
-                />
-              </div>
-
-              {/* Lighter Gradient overlay for text readability, blending smoothly */}
-              <div className="absolute inset-0 bg-gradient-to-t from-slate-950/75 via-slate-950/30 to-transparent z-10" />
-
-              <div className="relative z-20 translate-y-3 group-hover:translate-y-0 transition-transform duration-500">
-                <span className="inline-block px-4 py-1.5 rounded-full bg-white/10 backdrop-blur-md text-xs font-bold text-white mb-4 border border-white/20">
-                  {project.category}
-                </span>
-                <h3 className="text-2xl font-black text-white mb-2 drop-shadow-sm">{project.title}</h3>
-                <p className="text-slate-200 text-sm font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-75 leading-relaxed">
-                  {project.description}
-                </p>
-              </div>
-            </motion.div>
-          ))}
-        </div>
+        <div className="stage-caption"><span>{isRTL ? "تصميم يعبّر عنك" : "CRAFTED TO STAND OUT"}</span><span>0{active + 1} / 03</span></div>
       </div>
-    </section>
-  );
+      <div className="project-summary" aria-live="polite" aria-atomic="true"><div><p className="eyebrow">{project.type[isRTL ? 0 : 1]}</p><h3>{project.name[isRTL ? 0 : 1]}</h3></div><button className="button-text" aria-expanded={details} aria-controls="project-details" onClick={() => setDetails(!details)}>{isRTL ? "عن المشروع" : "About the project"}{details ? <Minus size={18} /> : <Plus size={18} />}</button></div>
+      {details && <div id="project-details" className="project-details"><p>{t(`project.${project.key}.desc`)}</p><p>{project.services[isRTL ? 0 : 1]}</p><a href="#contact" className="button-text">{isRTL ? "نصمم تجربة تناسب مشروعك" : "Let’s create your experience"}<Arrow size={18} /></a></div>}
+      <div className="project-controls"><div className="project-tabs" role="group" aria-label={isRTL ? "اختيار المشروع" : "Select project"}>{projects.map((p, i) => <button key={p.key} aria-pressed={i === active} onClick={() => {setActive(i);setDetails(false);}}><span>0{i + 1}</span>{p.name[isRTL ? 0 : 1]}</button>)}</div><div className="project-arrows"><button onClick={() => next(-1)} aria-label={isRTL ? "المشروع السابق" : "Previous project"}>{isRTL ? <ArrowRight size={20} /> : <ArrowLeft size={20} />}</button><button onClick={() => next(1)} aria-label={isRTL ? "المشروع التالي" : "Next project"}>{isRTL ? <ArrowLeft size={20} /> : <ArrowRight size={20} />}</button></div></div>
+    </div>
+  </section>;
 }

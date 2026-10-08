@@ -1,52 +1,12 @@
 "use client";
-
-import { MessageCircle, Mail } from "lucide-react";
-import { motion } from "framer-motion";
-
+import { useState } from "react";
+import { ArrowUpLeft, ArrowUpRight, Check } from "lucide-react";
+import { useLanguage } from "./LanguageContext";
 export default function ContactCTA() {
-  return (
-    <section id="contact" className="py-24 relative overflow-hidden bg-white">
-      {/* Background soft highlights */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-3xl h-96 bg-sky-500/5 blur-[120px] rounded-full pointer-events-none" />
-      
-      <div className="container mx-auto px-6 relative z-10">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
-          className="max-w-4xl mx-auto text-center bg-slate-50 border border-slate-100 p-12 md:p-20 rounded-[2.5rem] shadow-[0_15px_50px_rgba(0,0,0,0.015)]"
-        >
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-black mb-6 text-slate-900 leading-tight">
-            خل مشروعك الرقمي <span className="text-sky-500">يبدأ بشكل أقوى</span>
-          </h2>
-          <p className="text-lg sm:text-xl text-slate-600 mb-12 max-w-2xl mx-auto font-semibold leading-relaxed">
-            سواء كنت تحتاج موقعاً إلكترونياً، تطبيقاً ذكياً، متجراً متكاملاً، أو نظاماً خاصاً — Q8WEBS جاهزة لتبني لك تجربة رقمية استثنائية.
-          </p>
-          
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
-            {/* WhatsApp CTA Button */}
-            <a
-              href="https://wa.me/96555512344"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-3 w-full sm:w-auto justify-center px-8 py-4 rounded-full bg-sky-500 hover:bg-sky-600 text-white font-bold text-lg transition-all hover:scale-105 active:scale-95 shadow-[0_4px_14px_rgba(14,165,233,0.3)]"
-            >
-              <MessageCircle size={24} />
-              <span>واتساب: 55512344</span>
-            </a>
-            
-            {/* Email CTA Button */}
-            <a
-              href="mailto:info@q8webs.com"
-              className="flex items-center gap-3 w-full sm:w-auto justify-center px-8 py-4 rounded-full bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 font-bold text-lg transition-all hover:scale-105 active:scale-95 shadow-[0_4px_14px_rgba(0,0,0,0.02)]"
-            >
-              <Mail size={24} />
-              <span dir="ltr">info@q8webs.com</span>
-            </a>
-          </div>
-        </motion.div>
-      </div>
-    </section>
-  );
+  const { isRTL } = useLanguage();
+  const [selected, setSelected] = useState(0);
+  const services = isRTL ? ["موقع إلكتروني", "تطبيق جوال", "متجر إلكتروني", "نظام مخصص"] : ["Website", "Mobile app", "Online store", "Custom platform"];
+  const message = isRTL ? `مرحباً كويت ويبس، عندي فكرة مشروع ${services[selected]} وأبي نتكلم عن التفاصيل.` : `Hello Q8WEBS, I would like to discuss a project: ${services[selected]} and would love to discuss it.`;
+  const Arrow = isRTL ? ArrowUpLeft : ArrowUpRight;
+  return <section id="contact" className="contact-section section-space"><div className="site-shell contact-layout"><div><p className="eyebrow"><span className="status-dot" />{isRTL ? "الفكرة منك، والبداية معانا" : "YOUR IDEA. OUR NEXT CHAPTER."}</p><h2>{isRTL ? <>خلّ فكرتك<br /><em>تشوف النور.</em></> : <>Let’s make<br /><em>something matter.</em></>}</h2><p>{isRTL ? "كل مشروع مميز يبدأ بمحادثة بسيطة. قول لنا شنو في بالك." : "Every great project starts with a conversation. Tell us what you have in mind."}</p><a className="contact-email" href="mailto:info@q8webs.com">info@q8webs.com<Arrow size={22} /></a></div><div className="contact-panel"><span className="contact-question">{isRTL ? "شنو ودك نبني؟" : "What would you like to build?"}</span><div className="contact-options" role="group" aria-label={isRTL ? "نوع المشروع" : "Project type"}>{services.map((service, i) => <button key={service} aria-pressed={i === selected} onClick={() => setSelected(i)}>{service}{i === selected && <Check size={16} />}</button>)}</div><a href={`https://wa.me/96555512344?text=${encodeURIComponent(message)}`} target="_blank" rel="noopener noreferrer" className="button-primary contact-submit">{isRTL ? "نبدأ المحادثة على واتساب" : "Let’s talk on WhatsApp"}<Arrow size={20} /></a><div className="contact-note"><span dir="ltr">+965 5551 2344</span><span>{isRTL ? "الكويت والخليج" : "KUWAIT & THE GULF"}</span></div></div></div></section>;
 }

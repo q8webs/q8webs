@@ -21,7 +21,7 @@ export default function Logo({ className = "", size = "md" }: LogoProps) {
   return (
     <div className={`relative flex items-center justify-center ${className}`}>
       <Image
-        src="/images/q8webs-logonobg.png"
+        src="/images/editorial/q8webs-logo-transparent.webp"
         alt="Q8WEBS Logo"
         width={current.width}
         height={current.height}

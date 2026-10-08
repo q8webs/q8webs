@@ -1,143 +1,64 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import Link from "next/link";
-import { Menu, X } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
-import Logo from "./Logo";
+import Image from "next/image";
+import { useEffect, useRef, useState } from "react";
+import { ArrowUpLeft, ArrowUpRight, Menu, X } from "lucide-react";
+import { useLanguage } from "./LanguageContext";
 
 export default function Header() {
-  const [isScrolled, setIsScrolled] = useState(false);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [activeSection, setActiveSection] = useState("hero");
-
-  useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 30);
-      
-      // Determine active section for scroll indicator
-      const sections = ["hero", "services", "portfolio", "why-us", "blog"];
-      const scrollPosition = window.scrollY + 100;
-
-      for (const section of sections) {
-        const el = document.getElementById(section);
-        if (el) {
-          const top = el.offsetTop;
-          const height = el.offsetHeight;
-          if (scrollPosition >= top && scrollPosition < top + height) {
-            setActiveSection(section);
-            break;
-          }
-        }
-      }
-    };
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
-  const navLinks = [
-    { name: "الرئيسية", id: "hero", href: "#" },
-    { name: "خدماتنا", id: "services", href: "#services" },
-    { name: "أعمالنا", id: "portfolio", href: "#portfolio" },
-    { name: "من نحن", id: "why-us", href: "#why-us" },
-    { name: "المدونة", id: "blog", href: "#blog" },
+  const { isRTL, toggleLang } = useLanguage();
+  const [open, setOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const menuButton = useRef<HTMLButtonElement>(null);
+  const Arrow = isRTL ? ArrowUpLeft : ArrowUpRight;
+  const links = [
+    ["services", isRTL ? "خبراتنا" : "Expertise"],
+    ["web-design", isRTL ? "المواقع" : "Websites"],
+    ["mobile-apps", isRTL ? "التطبيقات" : "Mobile apps"],
+    ["portfolio", isRTL ? "أعمالنا" : "Our work"],
+    ["contact", isRTL ? "تواصل معنا" : "Let’s talk"],
   ];
 
-  return (
-    <header
-      className={`fixed top-0 w-full z-50 transition-all duration-300 ${
-        isScrolled
-          ? "bg-white/80 backdrop-blur-md border-b border-slate-100 py-3 shadow-[0_2px_20px_rgba(0,0,0,0.02)]"
-          : "bg-transparent py-5"
-      }`}
-    >
-      <div className="container mx-auto px-6 md:px-12 flex items-center justify-between">
-        {/* Centered/Left Brand Logo */}
-        <Link href="/" className="flex items-center gap-2 group">
-          <Logo size="sm" />
-        </Link>
+  useEffect(() => {
+    const update = () => setScrolled(window.scrollY > 60);
+    update();
+    window.addEventListener("scroll", update, { passive: true });
+    return () => window.removeEventListener("scroll", update);
+  }, []);
 
-        {/* Desktop Nav */}
-        <nav className="hidden md:flex items-center gap-8">
-          {navLinks.map((link) => (
-            <Link
-              key={link.name}
-              href={link.href}
-              className={`text-sm font-semibold transition-colors relative py-2 ${
-                activeSection === link.id
-                  ? "text-sky-500 font-bold"
-                  : "text-slate-600 hover:text-slate-900"
-              }`}
-            >
-              {link.name}
-              {activeSection === link.id && (
-                <motion.span
-                  layoutId="activeNavIndicator"
-                  className="absolute bottom-0 right-0 w-full h-[2px] bg-sky-500 rounded-full"
-                  transition={{ type: "spring", stiffness: 380, damping: 30 }}
-                />
-              )}
-            </Link>
+  useEffect(() => {
+    if (!open) return;
+    const escape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setOpen(false);
+        menuButton.current?.focus();
+      }
+    };
+    document.addEventListener("keydown", escape);
+    return () => document.removeEventListener("keydown", escape);
+  }, [open]);
+
+  return (
+    <header className={`editorial-header ${scrolled || open ? "header-solid" : ""}`}>
+      <a href="#main-content" className="skip-link">{isRTL ? "انتقل للمحتوى" : "Skip to content"}</a>
+      <div className="header-shell">
+        <a className="brand-plaque" href="#hero" aria-label="Q8WEBS">
+          <Image src="/images/editorial/q8webs-logo-transparent.webp" alt="Q8WEBS — Web Solutions" width={138} height={92} preload />
+        </a>
+        <span className="header-caption" dir="ltr">INDEPENDENT DIGITAL STUDIO<br /><b>KUWAIT & THE GULF</b></span>
+        <div className="header-tools">
+          <a className="header-project" href="#contact">{isRTL ? "عندك فكرة؟" : "Have a project?"}<Arrow size={15} /></a>
+          <button className="language-switch" onClick={toggleLang} aria-label={isRTL ? "Switch to English" : "التحويل إلى العربية"}>{isRTL ? "EN" : "عربي"}</button>
+          <button ref={menuButton} className="menu-trigger" aria-label={isRTL ? "القائمة" : "Menu"} aria-expanded={open} aria-controls="site-menu" onClick={() => setOpen(!open)}>{open ? <X size={22} /> : <Menu size={22} />}</button>
+        </div>
+      </div>
+      {open && (
+        <nav id="site-menu" className="editorial-menu" aria-label={isRTL ? "القائمة الرئيسية" : "Main navigation"}>
+          {links.map(([id, label], index) => (
+            <a href={`#${id}`} key={id} onClick={() => setOpen(false)}><span>{label}</span><small>0{index + 1}</small></a>
           ))}
         </nav>
-
-        {/* Desktop CTA Button */}
-        <div className="hidden md:block">
-          <a
-            href="https://wa.me/96555512344"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="px-6 py-2.5 rounded-full bg-sky-500 hover:bg-sky-600 text-white text-sm font-bold transition-all hover:scale-105 active:scale-95 shadow-[0_4px_14px_rgba(14,165,233,0.3)]"
-          >
-            تواصل معنا
-          </a>
-        </div>
-
-        {/* Mobile Menu Toggle */}
-        <button
-          className="md:hidden text-slate-800 p-2 hover:bg-slate-50 rounded-xl transition-colors"
-          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          aria-label="Toggle Menu"
-        >
-          {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
-        </button>
-      </div>
-
-      {/* Mobile Menu */}
-      <AnimatePresence>
-        {isMobileMenuOpen && (
-          <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.2 }}
-            className="absolute top-full left-0 w-full bg-white/95 backdrop-blur-lg border-b border-slate-100 py-6 px-6 flex flex-col gap-4 md:hidden shadow-lg"
-          >
-            {navLinks.map((link) => (
-              <Link
-                key={link.name}
-                href={link.href}
-                onClick={() => setIsMobileMenuOpen(false)}
-                className={`text-base font-semibold py-2 px-3 rounded-lg transition-colors ${
-                  activeSection === link.id
-                    ? "bg-sky-50 text-sky-600 font-bold"
-                    : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
-                }`}
-              >
-                {link.name}
-              </Link>
-            ))}
-            <a
-              href="https://wa.me/96555512344"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mt-4 text-center px-6 py-3 rounded-xl bg-sky-500 hover:bg-sky-600 text-white font-bold transition-all shadow-[0_4px_14px_rgba(14,165,233,0.3)]"
-            >
-              تواصل معنا
-            </a>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      )}
     </header>
   );
 }
